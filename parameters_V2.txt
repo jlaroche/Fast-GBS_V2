@@ -1,4 +1,4 @@
-; NAME OF FILE CONTAINING LOG
+; NAME OF FILE CONTAINING LOGS
 LOGFILE=logfile_fastgbs.log
 
 ; FLOWCELL INFORMATION
@@ -43,9 +43,14 @@ MVSAMPLES=YES
 
 ; OPTION TO SAVE DISK SPACE; DELETE INTERMEDIARY FILES: NO or YES
 DELFILES=NO
+LIST=
 
 ; NAME OF FILE CONTAINING LIST OF S1.BAM FILE FOR PLATYPUS ANALYSIS 
 BAMLIST=List_bam
+
+; VARIANT CALING FROM A DATABASE: NO or YES
+DATABASE=NO
+SOURCE=file_option.vcf
 
 ; FOR PLATYPUS: Minimum number of supporting reads required before a
 ; variant candidate will be considered (equivalent to minDP in vcftools)
@@ -57,3 +62,8 @@ LOGPLAT=FastGBS_platypus_log.txt
 ; PLATYPUS OUTPUT VCF FILE
 OUTPLAT=FastGBS_platypus
 
+; MISSING DATA IMPUTATION: NO or YES
+IMPUTATION=YES
+
+;Summary STAT
+SRG
