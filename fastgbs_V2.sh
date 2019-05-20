@@ -202,7 +202,7 @@ if [ "${seqtype}" = "SE" ]
 			for l in ${lanes}
 			do
 				printf "\t\t${l}\n" | tee -a "${logfile}"
-				./makeBarcodeSabre.py ${f} ${l} 'SE'
+				./makeBarcodeSabre_V2.py ${f} ${l} 'SE'
 				if [ $? -ne 0 ]
 					then 
 						printf "\t!!! There is a problem in step makeBarcode with ${f} ${l}\n" | tee -a "${logfile}"
@@ -258,7 +258,7 @@ if [ "${seqtype}" = "SE" ]
 	if [ "${Step}" != "MVSAMPLES" ]
 		if [ ${mvsamples} = YES ]
 			then
-				./MoveSamples.sh			
+				./MoveSamples_V2.sh			
 				if [ $? -ne 0 ]
 					then 
 						printf "\t!!! There is a problem with the moving samples step\n" | tee -a ../"${logfile}"
@@ -305,7 +305,7 @@ elif [ "${seqtype}" = "PE" ]
 			for l in ${lanes}
 			do
 				printf "\t\t${l}\n" | tee -a "${logfile}"
-				./makeBarcodeSabre.py ${f} ${l} 'PE'
+				./makeBarcodeSabre_V2.py ${f} ${l} 'PE'
 				if [ $? -ne 0 ]
 					then 
 						printf "\t!!! There is a problem in step makeBarcode with ${f} ${l}\n" | tee -a "${logfile}"
@@ -370,7 +370,7 @@ elif [ "${seqtype}" = "PE" ]
 	if [ "${Step}" != "MVSAMPLES" ]
 		if [ ${mvsamples} = YES ]
 			then
-				./MoveSamples.sh			
+				./MoveSamples_V2.sh			
 				if [ $? -ne 0 ]
 					then 
 						printf "\t!!! There is a problem with the moving samples step\n" | tee -a ../"${logfile}"
