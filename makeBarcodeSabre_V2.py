@@ -8,14 +8,16 @@ Give a valid flowcell and lane specification.
 Check the name given to the barcode file is in accord with the name of sequence file.
 
 Usage:
-    ./makeBarcodeSabre.py <flowcell> <lane> <seqtype>
+    ./makeBarcodeSabre_V2.py <flowcell> <lane> <seqtype>
 """
 
 import os, sys, fileinput
 import sys
 
 try:
-	f = open('barcodes_'+sys.argv[1]+'_'+sys.argv[2],'r')
+	flow=sys.argv[1]
+	lane=sys.argv[2]
+	f = open('barcodes/barcodes_'+flow+'_'+lane,'r')
 except:
 	print(__doc__)
 	sys.exit(1)
@@ -27,7 +29,7 @@ except:
 	sys.exit(1)
 
 if seqtype=='SE':
-	o = open(flow+'_'+lane+'_SE','w')
+	o = open('data/'+flow+'_'+lane+'_SE','w')
 	line = f.readline()
 	while line:
 		list = line.split()
@@ -37,7 +39,7 @@ if seqtype=='SE':
 	o.close()
 
 if seqtype=='PE':
-	o = open(flow+'_'+lane+'_PE','w')
+	o = open('data/'+flow+'_'+lane+'_PE','w')
 	line = f.readline()
 	while line:
 		list = line.split()

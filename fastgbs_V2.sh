@@ -59,9 +59,9 @@ fi
 printf "\t\tThe following parameters will be used in the platypus step:\n"  | tee -a "${logfile}"
 printf "\t\tgenIndels: ${genIndels}\n"  | tee -a "${logfile}"
 printf "\t\tminMapQual: ${minMapQual}\n"  | tee -a "${logfile}"
-printf "\t\tminBaseQual: ${minBaseQual}\n"  | tee -a "${logfile}"
+printf "\t\tminBaseQual: ${minBaseQual}\n\n"  | tee -a "${logfile}"
 
-type=$(grep "SEQTYPE=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
+seqtype=$(grep "SEQTYPE=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
 if [[ -z "${seqtype}" ]]
 	then
     	printf "\tThe SEQTYPE variable does not exist in the parameter file\n"  | tee -a "${logfile}"
@@ -79,13 +79,23 @@ else
 	printf  "\tREFGEN : ${refgen}\n"
 fi
 
-adap-for=$(grep "ADAP-FOR=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
-if [[ -z "${adap-for}" ]]
+adapfor=$(grep "ADAPFOR=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
+if [[ -z "${adapfor}" ]]
 	then
-    	printf "\tThe ADAP-FOR variable does not exist in the parameter file\n"  | tee -a "${logfile}"
+    	printf "\tThe ADAPFOR variable does not exist in the parameter file\n"  | tee -a "${logfile}"
 		exit 1
 else
-	printf  "\tADAP-FOR : ${adap-for}\n"  | tee -a "${logfile}"
+	printf  "\tADAPFOR : ${adapfor}\n"  | tee -a "${logfile}"
+fi
+
+
+adaprev=$(grep "ADAPREV=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
+if [[ -z "${adaprev}" ]]
+	then
+    	printf "\tThe ADAPREV variable does not exist in the parameter file\n"  | tee -a "${logfile}"
+		exit 1
+else
+	printf  "\tADAPREV : ${adaprev}\n"  | tee -a "${logfile}"
 fi
 
 readlen=$(grep "READLEN=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
@@ -131,6 +141,15 @@ if [[ -z "${delfiles}" ]]
 		exit 1
 else
 	printf  "\tDELFILES : ${delfiles}\n"  | tee -a "${logfile}"
+fi
+
+dellist=$(grep "DELLIST=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
+if [[ -z "${dellist}" ]]
+	then
+    	printf "\tThe DELLIST variable does not exist in the parameter file\n"  | tee -a "${logfile}"
+		exit 1
+else
+	printf  "\tDELLIST : ${dellist}\n"  | tee -a "${logfile}"
 fi
 
 mvsamples=$(grep "MVSAMPLES=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
@@ -188,6 +207,7 @@ else
 fi
 
 if [ "${seqtype}" = "SE" ]
+	then
 	printf "\nSequence type: Single End"
 
 	printf "\nProduction of specific barcodes files\n" | tee -a "${logfile}"
@@ -240,7 +260,7 @@ if [ "${seqtype}" = "SE" ]
 	if [ "${Step}" != "CUTADAP" ]
 		then
 			cd data
-			parallel -j "${nbcor}" cutadapt -a ${adap-for} -m ${readlen} -o {}.fastq {}.fq ::: $(ls -1 *.fq | sed 's/.fq//')
+			parallel -j "${nbcor}" cutadapt -a ${adapfor} -m ${readlen} -o {}.fastq {}.fq ::: $(ls -1 *.fq | sed 's/.fq//')
 			if [ $? -ne 0 ]
 				then 
 					printf "\t!!! There is a problem in the cutadapt step\n" | tee -a ../"${logfile}"
@@ -253,20 +273,22 @@ if [ "${seqtype}" = "SE" ]
 		printf  "\tThe variable CUTADAP is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 	fi
 
-	printf "\nMoving samples files with less than 10% of the average number of read in the pool\n" | tee -a "${logfile}"
+	printf "\nMoving samples files with less than 10 percent of the average number of read in the pool\n" | tee -a "${logfile}"
 	Step=$(grep "MVSAMPLES" checkpoint_${1})
 	if [ "${Step}" != "MVSAMPLES" ]
+		then
 		if [ ${mvsamples} = YES ]
 			then
-				./MoveSamples_V2.sh			
+				./count_nbseq_V2.sh			
 				if [ $? -ne 0 ]
 					then 
 						printf "\t!!! There is a problem with the moving samples step\n" | tee -a ../"${logfile}"
 						exit 1
+				fi
 		else
 			printf "No file move"
+			printf "MVSAMPLES\n" >> checkpoint_${1}
 		fi
-			cd ..
 			printf "MVSAMPLES\n" >> checkpoint_${1}
 	else
 		printf  "\tThe variable MVSAMPLES is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
@@ -291,7 +313,8 @@ if [ "${seqtype}" = "SE" ]
 	fi
 
 elif [ "${seqtype}" = "PE" ]
-	printf "\nSequence type: Paired Ends"
+	then
+	printf "\nSequence type: Paired Ends\n"
 	
 	printf "\nProduction of specific barcodes files\n" | tee -a "${logfile}"
 	Step=$(grep "BARCODES" checkpoint_${1})
@@ -320,15 +343,6 @@ elif [ "${seqtype}" = "PE" ]
 		printf  "\tThe variable BARCODES is in the checkpoint file. This step will then be passed\n"| tee -a "${logfile}"
 	fi
 
-	adap-rev=$(grep "ADAP-REV=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
-	if [[ -z "${adap-rev}" ]]
-		then
-    		printf "\tThe ADAP-REV variable does not exist in the parameter file\n"  | tee -a "${logfile}"
-			exit 1
-	else
-		printf  "\tADAP-REV : ${adap-rev}\n"  | tee -a "${logfile}"
-	fi
-
 	printf "\nDemultiplex with sabre\n" | tee -a "${logfile}"
 	Step=$(grep "SABRE" checkpoint_${1})
 	if [ "${Step}" != "SABRE" ]
@@ -347,12 +361,21 @@ elif [ "${seqtype}" = "PE" ]
 		printf  "\tThe variable SABRE is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 	fi
 
+	adaprev=$(grep "ADAPREV=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
+	if [[ -z "${adaprev}" ]]
+		then
+    		printf "\tThe ADAPREV variable does not exist in the parameter file\n"  | tee -a "${logfile}"
+			exit 1
+	else
+		printf  "\tADAPREV : ${adaprev}\n"  | tee -a "${logfile}"
+	fi
+
 	printf "\nRemoving adaptor with cutadapt\n" | tee -a "${logfile}"
 	Step=$(grep "CUTADAP" checkpoint_${1})
 	if [ "${Step}" != "CUTADAP" ]
 		then
 			cd data
-			parallel -j "${nbcor}" cutadapt -a ${adap} -A ${adap-rev} -m ${readlen} -o {}_R1.fastq -p {}_R2.fastq {}_R1.fq {}_R2.fq ::: $(ls -1 *_R1.fq | sed 's/_R1.fq//')
+			parallel -j "${nbcor}" cutadapt -a ${adapfor} -A ${adaprev} -m ${readlen} -o {}_R1.fastq -p {}_R2.fastq {}_R1.fq {}_R2.fq ::: $(ls -1 *_R1.fq | sed 's/_R1.fq//')
 			if [ $? -ne 0 ]
 				then 
 					printf "\t!!! There is a problem in the cutadapt step\n" | tee -a ../"${logfile}"
@@ -365,20 +388,24 @@ elif [ "${seqtype}" = "PE" ]
 		printf  "\tThe variable CUTADAP is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 	fi
 
-	printf "\nMoving samples files with less than 10% of the average number of read in the pool\n" | tee -a "${logfile}"
+	echo $PWD
+
+	printf "\nMoving samples files with less than 10 percent of the average number of read in the pool\n" | tee -a "${logfile}"
 	Step=$(grep "MVSAMPLES" checkpoint_${1})
 	if [ "${Step}" != "MVSAMPLES" ]
+		then
 		if [ ${mvsamples} = YES ]
 			then
-				./MoveSamples_V2.sh			
+				./count_nbseq_V2.sh			
 				if [ $? -ne 0 ]
 					then 
 						printf "\t!!! There is a problem with the moving samples step\n" | tee -a ../"${logfile}"
 						exit 1
+				fi
 		else
 			printf "No file move"
+			printf "MVSAMPLES\n" >> checkpoint_${1}
 		fi
-			cd ..
 			printf "MVSAMPLES\n" >> checkpoint_${1}
 	else
 		printf  "\tThe variable MVSAMPLES is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
@@ -390,7 +417,7 @@ elif [ "${seqtype}" = "PE" ]
 	if [ "${Step}" != "ALIGN" ]
 		then printf "\tStep no. 8: Alignment of single-end reads\n\n" | tee -a "${logfile}"
 		cd data
-		parallel -j "${bwapar}" bwa mem -t "${bwathr}" ../refgenome/"${refgen}" {}_R1.fastq {}_R2.fastq ">" {}.sam ::: $(ls -1 *.fastq | sed 's/.fastq//')
+		parallel -j "${bwapar}" bwa mem -t "${bwathr}" ../refgenome/"${refgen}" {}_R1.fastq {}_R2.fastq ">" {}.sam ::: $(ls -1 *_R1.fastq | sed 's/_R1.fastq//')
 		if [ $? -ne 0 ]
 			then 
 				printf "\t!!! There is a problem in the alignment step\n" | tee -a ../"${logfile}"
@@ -460,22 +487,26 @@ fi
 printf "\nDeletion of intermediary files to save disk space\n" | tee -a "${logfile}"
 Step=$(grep "DELFILES" checkpoint_${1})
 if [ "${Step}" != "DELFILES" ]
+	then
 	if [ ${delfiles} = YES ]
 		then
+			printf "\tDeletion of intermediary files\n"
 			cd data
 			rm *.fq *.sam *.temp.bam *.unknown.barcodes
+			cd ..
 			if [ $? -ne 0 ]
 				then 
-					printf "\t!!! There is a problem with the deltion step\n" | tee -a ../"${logfile}"
+					printf "\t!!! There is a problem with the deletion step\n" | tee -a ../"${logfile}"
 					exit 1
+			fi
 	else
-		printf "No deletion of intermediary files"
+		printf "\tNo deletion of intermediary files\n"
 	fi
-		cd ..
 		printf "DELFILES\n" >> checkpoint_${1}
 else
 	printf  "\tThe variable DELFILES is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 fi
+
 
 printf "\nProduction of the file containing the list of bam files to be process by platypus\n" | tee -a "${logfile}"
 Step=$(grep "BAMLIST" checkpoint_${1})
@@ -515,7 +546,7 @@ if [ "${Step}" != "PLATYPUS" ]
 		Platypus.py callVariants --bamFiles=../results/"${bamlist}" \
 	    --nCPU="${nbcor}" --minMapQual="${minMapQual}" --minBaseQual="${minBaseQual}" \
 	    --minGoodQualBases=5 --badReadsThreshold=10 \
-	    --rmsmqThreshold=20 --abThreshold=0.01 --maxReadLength=1000  --hapScoreThreshold=20 \
+	    --rmsmqThreshold=20 --abThreshold=0.01 --maxReadLength=250  --hapScoreThreshold=20 \
 	    --trimAdapter=0 --maxGOF=20 \
 	    --minReads="${minreads}" --genIndels="${genIndels}" --minFlank=5 \
 	    --sbThreshold=0.01 --scThreshold=0.95 --hapScoreThreshold=15 \
