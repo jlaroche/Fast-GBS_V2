@@ -1,17 +1,10 @@
-# Fast-GBS_V2
+# **Fast-GBS.v2: An Analysis Tool Set for Genotyping-by-Sequencing data**
 
-A bioinformatic pipeline designed to extract a high-quality SNP catalog starting from FASTQ
-files obtained from sequencing genotyping-by-sequencing (GBS) libraries. 
+
 
 ## Introduction
 
-Fast-GBS_V2 is a bash pipeline facilitating the processing of FASTQ sequence files obtained
-using a genotyping-by-sequencing method (GBS). It includes a set of bash commands, python
-home-made scripts, and well-known bioinformatics software such as sabre, bwa, samtools and
-platypus. Users simply fill out a parameter file and then launch the program.
-For each analysis, it requires the existence of a reference genome. This may be a
-relatively complete genome made of pseudochromosomes or a more preliminary draft consisting
-of scaffolds and contigs.
+Genotyping-by-sequencing (GBS) is a rapid, flexible, low cost and robust genome-wide scanning method of multiplexed samples for large-scale molecular marker discovery and genotyping. These characteristics make GBS an excellent tool for many applications and research questions from conservation to functional genomics in both model non-model species with complex genomes or limited available resources. Continued improvement of GBS relies on a more comprehensive understanding of data analysis, missing data imputation challenges and an active after-development support. Here, we present Fast-GBS.v2, a comprehensive analysis tool set for GBS data analysis and missing data imputation. 
 
 
 **Go to the Wiki page to see all the documentation on Fast-GBS_V2!**
