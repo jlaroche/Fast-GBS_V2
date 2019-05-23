@@ -566,3 +566,10 @@ if [ "${Step}" != "PLATYPUS" ]
 else
 	printf  "\tThe variable PLATYPUS is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 fi
+
+printf "\nSummary from the vcf file\n" | tee -a "${logfile}"
+cd results
+vcftools --vcf ./results/"${outplat}".vcf --extract-FORMAT-info GT --out ./results/"${outplat}"
+
+./Summary4VCF.py ./results/"${outplat}".GT.FORMAT
+
