@@ -376,8 +376,6 @@ elif [ "${seqtype}" = "PE" ]
 		then
     		printf "\tThe ADAPREV variable does not exist in the parameter file\n"  | tee -a "${logfile}"
 			exit 1
-	else
-		printf  "\tADAPREV : ${adaprev}\n"  | tee -a "${logfile}"
 	fi
 
 	printf "\nRemoving adaptor with cutadapt\n" | tee -a "${logfile}"
@@ -398,7 +396,6 @@ elif [ "${seqtype}" = "PE" ]
 		printf  "\tThe variable CUTADAP is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 	fi
 
-	echo $PWD
 
 	printf "\nMoving samples files with less than 10 percent of the average number of read in the pool\n" | tee -a "${logfile}"
 	Step=$(grep "MVSAMPLES" checkpoint_${1})
