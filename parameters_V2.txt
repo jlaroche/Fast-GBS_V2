@@ -46,9 +46,8 @@ DELLIST=*.fq *.sam *.temp.bam *.unknown.barcodes
 ; NAME OF FILE CONTAINING LIST OF S1.BAM FILE FOR PLATYPUS ANALYSIS 
 BAMLIST=List_bam
 
-; VARIANT CALING FROM A DATABASE: NO or YES
-DATABASE=NO
-SOURCE=file_option.vcf
+; VARIANT CALING FROM A DATABASE: None or vcf file
+SOURCE=None
 
 ; FOR PLATYPUS: Minimum number of supporting reads required before a
 ; variant candidate will be considered (equivalent to minDP in vcftools)

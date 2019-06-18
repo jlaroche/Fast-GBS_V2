@@ -188,6 +188,16 @@ else
 	printf  "\tLOGPLAT : ${logplat}\n"  | tee -a "${logfile}"
 fi
 
+source=$(grep "SOURCE=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
+if [[ -z "${source}" ]]
+	then
+    	printf "\tThe SOURCE variable does not exist in the parameter file\n"  | tee -a "${logfile}"
+		exit 1
+else
+	printf  "\tSOURCE : ${source}\n"  | tee -a "${logfile}"
+fi
+
+
 outplat=$(grep "OUTPLAT=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
 if [[ -z "${outplat}" ]]
 	then
@@ -543,7 +553,7 @@ Step=$(grep "PLATYPUS" checkpoint_${1})
 if [ "${Step}" != "PLATYPUS" ]
 	then
 		cd results
-		Platypus.py callVariants --bamFiles=../results/"${bamlist}" \
+		Platypus.py callVariants --bamFiles=../results/"${bamlist}" --source="{source}"\
 	    --nCPU="${nbcor}" --minMapQual="${minMapQual}" --minBaseQual="${minBaseQual}" \
 	    --minGoodQualBases=5 --badReadsThreshold=10 \
 	    --rmsmqThreshold=20 --abThreshold=0.01 --maxReadLength=250  --hapScoreThreshold=20 \
@@ -567,9 +577,24 @@ else
 	printf  "\tThe variable PLATYPUS is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 fi
 
-printf "\nSummary from the vcf file\n" | tee -a "${logfile}"
-cd results
-vcftools --vcf ./results/"${outplat}".vcf --extract-FORMAT-info GT --out ./results/"${outplat}"
 
-./Summary4VCF.py ./results/"${outplat}".GT.FORMAT
+printf "\nSummary from the vcf file\n" | tee -a "${logfile}"
+Step=$(grep "SUMMARY" checkpoint_${1})
+if [ "${Step}" != "SUMMARY" ]
+	then
+		cd results
+			vcftools --vcf "${outplat}".vcf --extract-FORMAT-info GT --out "${outplat}"
+			../Summary4VCF.py "${outplat}".GT.FORMAT
+
+		if [ $? -ne 0 ]
+			then 
+				printf "\t!!! There is a problem at the summary step\n" | tee -a ../"${logfile}"
+				exit 1
+		fi
+	    cd ..
+	    printf "SUMMARY\n" >> checkpoint_${1}
+
+else
+	printf  "\tThe variable SUMMARY is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
+fi
 
