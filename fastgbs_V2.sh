@@ -595,3 +595,25 @@ else
 	printf  "\tThe variable SUMMARY is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 fi
 
+
+printf "\nImputation of the vcf file\n" | tee -a "${logfile}"
+Step=$(grep "IMPUTATION" checkpoint_${1})
+if [ "${Step}" != "IMPUTATION" ]
+	then
+		cd results
+			vcftools --vcf "${outplat}".vcf --remove-filtered-all --max-missing 0.2 --remove-indels --mac 1 --min-alleles 2 --max-alleles 2 --recode --out "${outplat}"
+		
+			java -Xmx25000m -jar /prg/beagle/4.1.0/beagle.jar gt="${outplat}".recode.vcf out="${outplat}"_recode_imputed
+
+		if [ $? -ne 0 ]
+			then 
+				printf "\t!!! There is a problem at the imputation step\n" | tee -a ../"${logfile}"
+				exit 1
+		fi
+	    cd ..
+	    printf "IMPUTATION\n" >> checkpoint_${1}
+
+else
+	printf  "\tThe variable IMPUTATION is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
+fi
+
