@@ -220,7 +220,7 @@ if [ "${seqtype}" = "SE" ]
 	then
 	printf "\nSequence type: Single End"
 
-	printf "\nProduction of specific barcodes files\n" | tee -a "${logfile}"
+	printf "\nSE: Production of specific barcodes files\n" | tee -a "${logfile}"
 	Step=$(grep "BARCODES" checkpoint_${1})
 	if [ "${Step}" != "BARCODES" ]
 		then
@@ -247,7 +247,7 @@ if [ "${seqtype}" = "SE" ]
 		printf  "\tThe variable BARCODES is in the checkpoint file. This step will then be passed\n"| tee -a "${logfile}"
 	fi
 
-	printf "\nDemultiplex with sabre\n" | tee -a "${logfile}"
+	printf "\nSE: Demultiplex with sabre\n" | tee -a "${logfile}"
 	Step=$(grep "SABRE" checkpoint_${1})
 	if [ "${Step}" != "SABRE" ]
 		then
@@ -265,7 +265,7 @@ if [ "${seqtype}" = "SE" ]
 		printf  "\tThe variable SABRE is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 	fi
 
-	printf "\nRemoving adaptor with cutadapt\n" | tee -a "${logfile}"
+	printf "\nSE: Removing adaptor with cutadapt\n" | tee -a "${logfile}"
 	Step=$(grep "CUTADAP" checkpoint_${1})
 	if [ "${Step}" != "CUTADAP" ]
 		then
@@ -283,7 +283,7 @@ if [ "${seqtype}" = "SE" ]
 		printf  "\tThe variable CUTADAP is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 	fi
 
-	printf "\nMoving samples files with less than 10 percent of the average number of read in the pool\n" | tee -a "${logfile}"
+	printf "\nSE: Moving samples files with less than 10 percent of the average number of read in the pool\n" | tee -a "${logfile}"
 	Step=$(grep "MVSAMPLES" checkpoint_${1})
 	if [ "${Step}" != "MVSAMPLES" ]
 		then
@@ -304,7 +304,7 @@ if [ "${seqtype}" = "SE" ]
 		printf  "\tThe variable MVSAMPLES is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 	fi
 
-	printf "\nAlignment of reads with BWA-MEM\n" | tee -a "${logfile}"
+	printf "\nSE: Alignment of reads with BWA-MEM\n" | tee -a "${logfile}"
 	Step=$(grep "ALIGN" checkpoint_${1})
 	if [ "${Step}" != "ALIGN" ]
 		then printf "\tStep no. 8: Alignment of single-end reads\n\n" | tee -a "${logfile}"
@@ -326,7 +326,7 @@ elif [ "${seqtype}" = "PE" ]
 	then
 	printf "\nSequence type: Paired Ends\n"
 	
-	printf "\nProduction of specific barcodes files\n" | tee -a "${logfile}"
+	printf "\nPE: Production of specific barcodes files\n" | tee -a "${logfile}"
 	Step=$(grep "BARCODES" checkpoint_${1})
 	if [ "${Step}" != "BARCODES" ]
 		then
@@ -353,7 +353,7 @@ elif [ "${seqtype}" = "PE" ]
 		printf  "\tThe variable BARCODES is in the checkpoint file. This step will then be passed\n"| tee -a "${logfile}"
 	fi
 
-	printf "\nDemultiplex with sabre\n" | tee -a "${logfile}"
+	printf "\nPE: Demultiplex with sabre\n" | tee -a "${logfile}"
 	Step=$(grep "SABRE" checkpoint_${1})
 	if [ "${Step}" != "SABRE" ]
 		then
@@ -378,7 +378,7 @@ elif [ "${seqtype}" = "PE" ]
 			exit 1
 	fi
 
-	printf "\nRemoving adaptor with cutadapt\n" | tee -a "${logfile}"
+	printf "\nPE: Removing adaptor with cutadapt\n" | tee -a "${logfile}"
 	Step=$(grep "CUTADAP" checkpoint_${1})
 	if [ "${Step}" != "CUTADAP" ]
 		then
@@ -397,7 +397,7 @@ elif [ "${seqtype}" = "PE" ]
 	fi
 
 
-	printf "\nMoving samples files with less than 10 percent of the average number of read in the pool\n" | tee -a "${logfile}"
+	printf "\nPE: Moving samples files with less than 10 percent of the average number of read in the pool\n" | tee -a "${logfile}"
 	Step=$(grep "MVSAMPLES" checkpoint_${1})
 	if [ "${Step}" != "MVSAMPLES" ]
 		then
@@ -419,7 +419,7 @@ elif [ "${seqtype}" = "PE" ]
 	fi
 
 
-	printf "\nAlignment of reads with BWA-MEM\n" | tee -a "${logfile}"
+	printf "\nPE: Alignment of reads with BWA-MEM\n" | tee -a "${logfile}"
 	Step=$(grep "ALIGN" checkpoint_${1})
 	if [ "${Step}" != "ALIGN" ]
 		then printf "\tStep no. 8: Alignment of single-end reads\n\n" | tee -a "${logfile}"
@@ -499,7 +499,7 @@ if [ "${Step}" != "DELFILES" ]
 		then
 			printf "\tDeletion of intermediary files\n"
 			cd data
-			rm *.fq *.sam *.temp.bam *.unknown.barcodes
+			rm ${dellist}
 			cd ..
 			if [ $? -ne 0 ]
 				then 
@@ -570,6 +570,7 @@ if [ "${Step}" != "PLATYPUS" ]
 	    --refFile=../refgenome/"${refgen}" \
 	    --logFileName="${logplat}" \
 	    --output="${outplat}".vcf
+	    
 		if [ $? -ne 0 ]
 			then 
 				printf "\t!!! There is a problem at the platypus step\n" | tee -a ../"${logfile}"
