@@ -550,7 +550,14 @@ Step=$(grep "PLATYPUS" checkpoint_${1})
 if [ "${Step}" != "PLATYPUS" ]
 	then
 		cd results
-		Platypus.py callVariants --bamFiles=../results/"${bamlist}" --source="{source}"\
+		
+		if [ "${source}" = "None" ]
+			then sopt=""
+		else
+			sopt="--source=${source}"
+		fi
+
+		Platypus.py callVariants --bamFiles=../results/"${bamlist}" ${sopt}\
 	    --nCPU="${nbcor}" --minMapQual="${minMapQual}" --minBaseQual="${minBaseQual}" \
 	    --minGoodQualBases=5 --badReadsThreshold=10 \
 	    --rmsmqThreshold=20 --abThreshold=0.01 --maxReadLength=250  --hapScoreThreshold=20 \
