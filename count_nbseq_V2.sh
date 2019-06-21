@@ -53,3 +53,5 @@ done
 
 )
 )
+
+mv stat_fq.txt ../stat

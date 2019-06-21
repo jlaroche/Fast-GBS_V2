@@ -46,7 +46,7 @@ while line:
 	
 	#Fill the samples dict
 	a=0
-	while a< len(listGT):
+	while a < len(listGT):
 		samples[listSamples[a]].append(listGT[a])
 		a+=1
 	
@@ -54,7 +54,8 @@ while line:
 
 #Output the info in 2 files
 #one for the sites
-out1=open('results/Summary_By_Sites_python.txt','w')
+out1=open('Summary_By_Sites_python.txt','w')
+out1.write('Chr_Pos\tTotal Number of Samples\tNumber of homozygotes\tNumber of heterozygotes\tNumber of other genotypes\tNumber of missing data\n')
 
 for s in listSites:
 	nb_homo1=sites[s].count('0/0')
@@ -62,17 +63,23 @@ for s in listSites:
 	nb_het1=sites[s].count('1/0')
 	nb_het2=sites[s].count('0/1')
 	nb_miss=sites[s].count('./.')
-	out1.write(s+'\t'+str(len(sites[s]))+'\t'+str(nb_homo1+nb_homo2+nb_het1+nb_het2+nb_miss)+'\t'+str(nb_homo1+nb_homo2)+'\t'+str(nb_het1+nb_het2)+'\t'+str(nb_miss)+'\n')
+	nb_others=len(sites[s])-nb_homo1-nb_homo2-nb_het1-nb_het2-nb_miss
+#	out1.write(s+'\t'+str(len(sites[s]))+'\t'+str(nb_homo1+nb_homo2+nb_het1+nb_het2+nb_miss)+'\t'+str(nb_homo1+nb_homo2)+'\t'+str(nb_het1+nb_het2)+'\t'+str(nb_miss)+'\n')
+	out1.write(s+'\t'+str(len(sites[s]))+'\t'+str(nb_homo1+nb_homo2)+'\t'+str(nb_het1+nb_het2)+'\t'+str(nb_others)+'\t'+str(nb_miss)+'\n')
+
 
 #the other for the samples
-out2=open('results/Summary_By_Samples_python.txt','w')
+out2=open('Summary_By_Samples_python.txt','w')
+out2.write('Samples\tTotal Number of Sites\tNumber of homozygotes\tNumber of heterozygotes\tNumber of other genotypes\tNumber of missing data\n')
 for s in listSamples:
 	nb_homo1=samples[s].count('0/0')
 	nb_homo2=samples[s].count('1/1')
 	nb_het1=samples[s].count('1/0')
 	nb_het2=samples[s].count('0/1')
 	nb_miss=samples[s].count('./.')
-	out2.write(s+'\t'+str(len(samples[s]))+'\t'+str(nb_homo1+nb_homo2+nb_het1+nb_het2+nb_miss)+'\t'+str(nb_homo1+nb_homo2)+'\t'+str(nb_het1+nb_het2)+'\t'+str(nb_miss)+'\n')
+	nb_others=len(samples[s])-nb_homo1-nb_homo2-nb_het1-nb_het2-nb_miss
+#	out2.write(s+'\t'+str(len(samples[s]))+'\t'+str(nb_homo1+nb_homo2+nb_het1+nb_het2+nb_miss)+'\t'+str(nb_homo1+nb_homo2)+'\t'+str(nb_het1+nb_het2)+'\t'+str(nb_miss)+'\n')
+	out2.write(s+'\t'+str(len(samples[s]))+'\t'+'\t'+str(nb_homo1+nb_homo2)+'\t'+str(nb_het1+nb_het2)+'\t'+str(nb_others)+'\t'+str(nb_miss)+'\n')
 
 f.close()
 out1.close()
