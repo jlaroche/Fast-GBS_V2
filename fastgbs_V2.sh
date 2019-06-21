@@ -422,7 +422,7 @@ elif [ "${seqtype}" = "PE" ]
 	printf "\nPE: Alignment of reads with BWA-MEM\n" | tee -a "${logfile}"
 	Step=$(grep "ALIGN" checkpoint_${1})
 	if [ "${Step}" != "ALIGN" ]
-		then printf "\tStep no. 8: Alignment of single-end reads\n\n" | tee -a "${logfile}"
+		then printf "\tStep no. 8: Alignment of paired-end reads\n\n" | tee -a "${logfile}"
 		cd data
 		parallel -j "${bwapar}" bwa mem -t "${bwathr}" ../refgenome/"${refgen}" {}_R1.fastq {}_R2.fastq ">" {}.sam ::: $(ls -1 *_R1.fastq | sed 's/_R1.fastq//')
 		if [ $? -ne 0 ]
