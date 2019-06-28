@@ -14,7 +14,7 @@ module load bwa/0.7.17
 module load samtools/1.8
 module load vcftools/0.1.16
 module load java/jdk/1.8.0_102
-module load beagle/4.1.0
+module load beagle/5.0
 module load python/2.7
 module load htslib/1.8
 module load platypus/0.8.1.1

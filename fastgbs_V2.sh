@@ -207,6 +207,29 @@ else
 	printf  "\tOUTPLAT : ${outplat}\n"  | tee -a "${logfile}"
 fi
 
+
+maxmis=$(grep "MAX-MISSING=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
+if [[ -z "${maxmis}" ]]
+	then
+    	printf "\tThe MAX-MISSING variable does not exist in the parameter file\n"  | tee -a "${logfile}"
+		exit 1
+else
+	printf  "\tMAX-MISSING : ${maxmis}\n"  | tee -a "${logfile}"
+fi
+
+
+allfreq=$(grep "ALLELE.FREQ=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
+if [[ -z "${allfreq}" ]]
+	then
+    	printf "\tThe ALLELE.FREQ variable does not exist in the parameter file\n"  | tee -a "${logfile}"
+		exit 1
+else
+	printf  "\tALLELE.FREQ : ${allfreq}\n"  | tee -a "${logfile}"
+fi
+
+
+
+
 printf "\nChecking for the presence of the checkpoint file\n" | tee -a "${logfile}"
 if [ ! -f "checkpoint_${1}" ]
 	then
@@ -582,14 +605,34 @@ else
 	printf  "\tThe variable PLATYPUS is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 fi
 
+printf "\nImputation of the vcf file\n" | tee -a "${logfile}"
+Step=$(grep "IMPUTATION" checkpoint_${1})
+if [ "${Step}" != "IMPUTATION" ]
+	then
+		cd results
+			vcftools --vcf "${outplat}".vcf --remove-filtered-all --max-missing ${maxmis} ${allfreq} --remove-indels --mac 1 --min-alleles 2 --max-alleles 2 --recode --out "${outplat}"
+		
+			java -Xmx25000m -jar /prg/beagle/5.0/beagle.jar gt="${outplat}".recode.vcf out="${outplat}"_recode_imputed
+
+		if [ $? -ne 0 ]
+			then 
+				printf "\t!!! There is a problem at the imputation step\n" | tee -a ../"${logfile}"
+				exit 1
+		fi
+	    cd ..
+	    printf "IMPUTATION\n" >> checkpoint_${1}
+
+else
+	printf  "\tThe variable IMPUTATION is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
+fi
 
 printf "\nSummary from the vcf file\n" | tee -a "${logfile}"
 Step=$(grep "SUMMARY" checkpoint_${1})
 if [ "${Step}" != "SUMMARY" ]
 	then
 		cd results
-			vcftools --vcf "${outplat}".vcf --extract-FORMAT-info GT --out "${outplat}"
-			../Summary4VCF.py "${outplat}".GT.FORMAT
+			vcftools --vcf "${outplat}".recode.vcf --extract-FORMAT-info GT --out "${outplat}".recode
+			../Summary4VCF.py "${outplat}".recode.GT.FORMAT
 
 		if [ $? -ne 0 ]
 			then 
@@ -603,25 +646,4 @@ else
 	printf  "\tThe variable SUMMARY is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 fi
 
-
-printf "\nImputation of the vcf file\n" | tee -a "${logfile}"
-Step=$(grep "IMPUTATION" checkpoint_${1})
-if [ "${Step}" != "IMPUTATION" ]
-	then
-		cd results
-			vcftools --vcf "${outplat}".vcf --remove-filtered-all --max-missing 0.2 --remove-indels --mac 1 --min-alleles 2 --max-alleles 2 --recode --out "${outplat}"
-		
-			java -Xmx25000m -jar /prg/beagle/4.1.0/beagle.jar gt="${outplat}".recode.vcf out="${outplat}"_recode_imputed
-
-		if [ $? -ne 0 ]
-			then 
-				printf "\t!!! There is a problem at the imputation step\n" | tee -a ../"${logfile}"
-				exit 1
-		fi
-	    cd ..
-	    printf "IMPUTATION\n" >> checkpoint_${1}
-
-else
-	printf  "\tThe variable IMPUTATION is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
-fi
 
