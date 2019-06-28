@@ -610,7 +610,7 @@ Step=$(grep "IMPUTATION" checkpoint_${1})
 if [ "${Step}" != "IMPUTATION" ]
 	then
 		cd results
-			vcftools --vcf "${outplat}".vcf --remove-filtered-all --max-missing ${maxmis} ${allfreq} --remove-indels --mac 1 --min-alleles 2 --max-alleles 2 --recode --out "${outplat}"
+			vcftools --vcf "${outplat}".vcf --remove-filtered-all --max-missing ${maxmis} --remove-indels --mac 1 --min-alleles 2 --max-alleles 2 --recode --out "${outplat}"
 		
 			java -Xmx25000m -jar /prg/beagle/5.0/beagle.jar gt="${outplat}".recode.vcf out="${outplat}"_recode_imputed
 
