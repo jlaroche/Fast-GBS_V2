@@ -88,7 +88,6 @@ else
 	printf  "\tADAPFOR : ${adapfor}\n"  | tee -a "${logfile}"
 fi
 
-
 adaprev=$(grep "ADAPREV=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
 if [[ -z "${adaprev}" ]]
 	then
@@ -197,7 +196,6 @@ else
 	printf  "\tSOURCE : ${source}\n"  | tee -a "${logfile}"
 fi
 
-
 outplat=$(grep "OUTPLAT=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
 if [[ -z "${outplat}" ]]
 	then
@@ -206,7 +204,6 @@ if [[ -z "${outplat}" ]]
 else
 	printf  "\tOUTPLAT : ${outplat}\n"  | tee -a "${logfile}"
 fi
-
 
 maxmis=$(grep "MAX-MISSING=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
 if [[ -z "${maxmis}" ]]
@@ -217,7 +214,6 @@ else
 	printf  "\tMAX-MISSING : ${maxmis}\n"  | tee -a "${logfile}"
 fi
 
-
 allfreq=$(grep "ALLELE.FREQ=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
 if [[ -z "${allfreq}" ]]
 	then
@@ -226,9 +222,6 @@ if [[ -z "${allfreq}" ]]
 else
 	printf  "\tALLELE.FREQ : ${allfreq}\n"  | tee -a "${logfile}"
 fi
-
-
-
 
 printf "\nChecking for the presence of the checkpoint file\n" | tee -a "${logfile}"
 if [ ! -f "checkpoint_${1}" ]
@@ -537,7 +530,6 @@ else
 	printf  "\tThe variable DELFILES is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 fi
 
-
 printf "\nProduction of the file containing the list of bam files to be process by platypus\n" | tee -a "${logfile}"
 Step=$(grep "BAMLIST" checkpoint_${1})
 if [ "${Step}" != "BAMLIST" ]
@@ -645,5 +637,3 @@ if [ "${Step}" != "SUMMARY" ]
 else
 	printf  "\tThe variable SUMMARY is in the checkpoint file. This step will be passed\n" | tee -a "${logfile}"
 fi
-
-
