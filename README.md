@@ -1,4 +1,4 @@
-# **Fast-GBS.v2: An Analysis Tool Set for Genotyping-by-Sequencing data**
+# **Fast-GBS.v2: An Analysis Toolkit for Genotyping-by-Sequencing data**
 
 
 
