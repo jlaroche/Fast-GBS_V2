@@ -88,15 +88,6 @@ else
 	printf  "\tADAPFOR : ${adapfor}\n"  | tee -a "${logfile}"
 fi
 
-adaprev=$(grep "ADAPREV=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
-if [[ -z "${adaprev}" ]]
-	then
-    	printf "\tThe ADAPREV variable does not exist in the parameter file\n"  | tee -a "${logfile}"
-		exit 1
-else
-	printf  "\tADAPREV : ${adaprev}\n"  | tee -a "${logfile}"
-fi
-
 readlen=$(grep "READLEN=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
 if [[ -z "${readlen}" ]]
 	then
@@ -390,8 +381,10 @@ elif [ "${seqtype}" = "PE" ]
 	adaprev=$(grep "ADAPREV=" $1 | cut -d "=" -f 2 | sed "s/\r//g")
 	if [[ -z "${adaprev}" ]]
 		then
-    		printf "\tThe ADAPREV variable does not exist in the parameter file\n"  | tee -a "${logfile}"
+		printf "\tThe ADAPREV variable does not exist in the parameter file\n"  | tee -a "${logfile}"
 			exit 1
+	else
+		printf  "\tADAPREV : ${adaprev}\n"  | tee -a "${logfile}"
 	fi
 
 	printf "\nPE: Removing adaptor with cutadapt\n" | tee -a "${logfile}"

@@ -12,7 +12,6 @@ Usage:
 """
 
 import os, sys, fileinput
-import sys
 
 try:
 	flow=sys.argv[1]
