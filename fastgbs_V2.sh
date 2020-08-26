@@ -569,7 +569,7 @@ if [ "${Step}" != "PLATYPUS" ]
 	    --nCPU="${nbcor}" --minMapQual="${minMapQual}" --minBaseQual="${minBaseQual}" \
 	    --minGoodQualBases=5 --badReadsThreshold=10 \
 	    --rmsmqThreshold=20 --abThreshold=0.01 --maxReadLength=250  --hapScoreThreshold=20 \
-	    --trimAdapter=0 --maxGOF=20 \
+	    --trimAdapter=0 --maxGOF=20 --maxReads=500000000 \
 	    --minReads="${minreads}" --genIndels="${genIndels}" --minFlank=5 \
 	    --sbThreshold=0.01 --scThreshold=0.95 --hapScoreThreshold=15 \
 	    --filterDuplicates=0 \
