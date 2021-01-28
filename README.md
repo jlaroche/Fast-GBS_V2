@@ -15,7 +15,7 @@ Genotyping-by-sequencing (GBS) is a rapid, flexible, low cost and robust genome-
 
 To cite Fast-GBS.v2: 
 
-Torkamaneh, D., Laroche, J., Boyle, B., & Belzile, F. (2019). Fast-GBS.v2: An Analysis Tool Set for Genotyping-by-Sequencing data (unpublished)
+Torkamaneh. D., Laroche, J., Belzile, F. (2020). Fast-GBS v2.0: an analysis toolkit for genotyping-by-sequencing data. Genome. 63(11):577-581. doi: 10.1139/gen-2020-0077.
 
 To cite Fast-GBS: 
 
